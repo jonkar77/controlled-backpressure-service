@@ -10,4 +10,6 @@ public interface QueueService {
 
     public Task dequeTask();
 
+    public int getRejectedTasksCount();
+
 }

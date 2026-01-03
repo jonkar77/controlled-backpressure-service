@@ -1,14 +1,16 @@
 package IngressApplication.IngressApplication.model;
+import jakarta.validation.constraints.NotBlank;
+
 
 import org.jspecify.annotations.NonNull;
 
 public class Task {
 
-   @NonNull
+   @NotBlank
    private String id;
-    @NonNull
+   @NotBlank
    private String type;
-    @NonNull
+   @NotBlank
    private String payload;
 
     public String getType() {
