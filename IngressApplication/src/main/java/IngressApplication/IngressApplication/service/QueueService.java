@@ -6,10 +6,19 @@ import org.springframework.stereotype.Service;
 
 public interface QueueService {
 
-    public void enqueueTask(Task task);
 
     public Task dequeTask();
 
-    public int getRejectedTasksCount();
+
+    public boolean tryEnqueue(Task task);
+
+    public Task poll();
+
+    public long getAcceptedCount();
+
+    public long getRejectedCount();
+
+    public long queueSize();
+
 
 }

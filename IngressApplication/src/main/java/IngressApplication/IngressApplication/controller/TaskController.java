@@ -2,6 +2,7 @@ package IngressApplication.IngressApplication.controller;
 
 import IngressApplication.IngressApplication.model.Task;
 import IngressApplication.IngressApplication.service.QueueService;
+import IngressApplication.IngressApplication.service.QueueServiceImpl;
 import IngressApplication.IngressApplication.utils.Exceptions.CustomResponse;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @RestController
@@ -28,14 +31,10 @@ public class TaskController {
 
     @RequestMapping("/request")
     @PostMapping
-    public ResponseEntity<?> enqueueTask(@Validated @RequestBody Task task) {
-        return timer.record(() -> {
-            queueService.enqueueTask(task);
-            return ResponseEntity
-                    .status(HttpStatus.ACCEPTED)
-                    .body(new CustomResponse("Task enqueued successfully",
-                            HttpStatus.ACCEPTED.value(), new Object[1]));
-        });
+    public ResponseEntity<Void> enqueue(@RequestBody Task task) {
+        return queueService.tryEnqueue(task)
+                ? ResponseEntity.accepted().build()
+                : ResponseEntity.status(429).build();
     }
 
 
@@ -62,14 +61,12 @@ public class TaskController {
 
     @RequestMapping("/metrics")
     @GetMapping
-    public ResponseEntity<?> getMetrics() {
-        int failedTasksCount = queueService.getRejectedTasksCount();
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(
-                        new CustomResponse("Metrics fetched successfully",
-                                HttpStatus.OK.value(), new Object[]{failedTasksCount})
-                );
+    public Map<String, Long> getMetrics() {
+        return Map.of(
+                "acceptedCount", queueService.getAcceptedCount(),
+                "rejectedCount", queueService.getRejectedCount(),
+                "currentQueueSize", queueService.queueSize()
+        );
     }
 
 }
