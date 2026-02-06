@@ -7,13 +7,18 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @RestControllerAdvice
-public class GlobalExceptionHandler{
+public class GlobalExceptionHandler {
     @ExceptionHandler(QueueFullException.class)
     public ResponseEntity<Object> handleQueueFullException(QueueFullException ex) {
-            return ResponseEntity
-                    .status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(new CustomResponse(ex.getMessage(), HttpStatus.TOO_MANY_REQUESTS.value(), new int[0]));
+        System.out.println("Time: " + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME)
+                + "AT Full Queue Thread: " + Thread.currentThread().getName() + " state: " + Thread.currentThread().getState());
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new CustomResponse(ex.getMessage(), HttpStatus.TOO_MANY_REQUESTS.value(), new int[0]));
     }
 
     @ExceptionHandler(ServiceUnavailableException.class)
