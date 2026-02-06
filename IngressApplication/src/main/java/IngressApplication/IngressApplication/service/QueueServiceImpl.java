@@ -23,10 +23,10 @@ public class QueueServiceImpl implements QueueService {
 
     @Override
     public Task dequeTask() {
-        if (queue.isEmpty()) {
+        Task task = (Task) queue.poll();
+        if (task==null) {
             throw new EmptyQueueException("No tasks in the queue to dequeue.");
         }
-        Task task = (Task) queue.poll();
         return task;
     }
 
