@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class QueueServiceImpl implements QueueService {
 
     private final ArrayBlockingQueue<Task> queue =
-            new ArrayBlockingQueue<>(100000);
+            new ArrayBlockingQueue<>(100_000);
     private final LongAdder acceptedCount = new LongAdder();
     private final LongAdder rejectedCount = new LongAdder();
 
